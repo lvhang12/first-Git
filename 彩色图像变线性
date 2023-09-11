@@ -1,0 +1,23 @@
+#python
+
+import numpy as np
+from PIL import Image
+array=np.asarray(Image.open("//自定义图像地址").convert("L")).astype(np.float64)
+depth=10
+grad_x,grad_y=np.gradient(array)
+grad_x=grad_y*depth/100
+grad_y=grad_y*depth/100
+dis=np.sqrt(grad_x**2+grad_y**2+0.1)
+uni_x=grad_x/dis
+uni_y=grad_y/dis
+uni_z=1.0/dis
+vec_el=np.pi/2.2
+vec_az=np.pi/4
+dx=np.cos(vec_el)*np.cos(vec_az)
+dy=np.cos(vec_el)*np.sin(vec_az)
+dz=np.sin(vec_el)
+
+out=255*(uni_x*dx+uni_y*dy+uni_z*dz)
+out=out.clip(0,255)
+img=Image.fromarray(out.astype(np.uint8))
+img.save("//保存路径")
